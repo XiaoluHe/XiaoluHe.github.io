@@ -1,0 +1,269 @@
+	<!--引入网站头开始-->
+	{include file="../application/index/view/public/_header.html"/}
+	<!--引入网站头结束-->
+	<script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak=COzYFy8Pvp0fgG0CHZK9sXattR6IW9at"></script>
+	<script type="text/javascript" src="__static__/common/js/jquery-1.11.3.js"></script>
+	<script type="text/javascript" src="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.js"></script>
+	<link rel="stylesheet" href="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.css" />
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<style type="text/css">
+		div#container{width: 100%; height: 600px;}
+		.anchorBL{display: none;}
+	</style>
+</head>
+<body>
+	<!--引入网站头开始-->
+	{include file="../application/index/view/public/_top.html"/}
+	<!--引入网站头结束-->
+	<div id="content">
+		<div id="container"></div>
+		<div class="remove-traffic">
+			移除交通流量图层
+			<input type="text" name="localsearch" placeholder="城市检索">
+		</div>
+		<div class="map-event">
+			<ul class="event">
+				<li class="addTrafficLayer">addTrafficLayer(创建交通流量图形信息)</li>
+				<li class="addControl">addControl(添加平移缩放控件)</li>
+				<li class="addScaleControl">addScaleControl(添加比例尺控件)</li>
+				<li class="addOverviewMapControl">addOverviewMapControl(添加缩略地图控件)</li>
+				<li class="addMapTypeControl">addMapTypeControl(添加地图类型控件)</li>
+				<li class="addZoomendListener">addZoomendListener(实时监听地图放大级别)</li>
+				<li class="addCanvasLayer">addCanvasLayer(自定义绘制层)</li>
+				<li class="localSearch">localSearch(城市检索)</li>
+				<li class="addSearchNearby">addSearchNearby(圆形区域检索)</li>
+				<li class="addSearchBounds">addSearchBounds(矩形区域检索)</li>
+				<li class="location">location(定位)</li>
+			</ul>
+		</div>
+	</div>
+</body>
+	<script type="text/javascript">
+    $(function(){
+        var point = "", points = [], bm = 0, zoom = 15 , lng = 108.57308360761, lat = 34.386694694667, traffic = '';
+    	$("input[name='localsearch']").on("blur",function(){
+    		localSearch(bm,$(this).val());
+    	})
+    	$("#content").find("div.map-event ul.event").on("click","li",function(){
+    		switch($(this).index()){
+    			case 0: addTrafficLayer(bm); break;
+    			case 1: addControl(bm); break;
+    			case 2: addScaleControl(bm); break;
+    			case 3: addOverviewMapControl(bm); break;
+    			case 4: addMapTypeControl(bm); break;
+    			case 5: addZoomendListener(bm); break;
+    			case 6: addCanvasLayer(bm); break;
+    			case 7: localSearch(bm); break;
+    			case 8: addSearchNearby(bm); break;
+    			case 9: addSearchBounds(bm); break;
+    			case 10: location(bm); break;
+    		}
+    		console.log("this-index="+$(this).index());
+    	})
+        for (var i = 0; i<10 ; i++) {
+        	point = new BMap.Point(lng+0.001*i,lat+0.001*i);
+        	point.data = "100"+i;
+        	points.push(point);
+        	if (i == 9) {
+        		createMap(points, zoom);
+        	}
+        }
+
+        function createMap(point= 0,zoom = 15){  //mapType:地图类型;point:点集;
+            //地图初始化
+            bm = new BMap.Map("container",{mapType:BMAP_HYBRID_MAP});  //转卫星图 
+            bm.enableScrollWheelZoom(true);             //启用滚轮放大缩小
+            bm.centerAndZoom(point[0], zoom);
+            for(var m=0; m<point.length; m++){  //循环，每次转换一个点
+                translateOne([point[m]],point[m].data,bm);
+            }
+
+            var tileLayer = new BMap.TileLayer();
+            tileLayer.getTilesUrl = function (){
+            	return '';
+            	// return "../../static/common/img/personal-portrait.jpg";
+            }
+            bm.addTileLayer(tileLayer);
+            bm.addEventListener("click",showInfo);
+        }
+        var styleOptions = {
+		    strokeColor:"red",    //边线颜色。
+		    fillColor:"red",      //填充颜色。当参数为空时，圆形将没有填充效果。
+		    strokeWeight: 3,       //边线的宽度，以像素为单位。
+		    strokeOpacity: 0.8,    //边线透明度，取值范围0 - 1。
+		    fillOpacity: 0.6,      //填充的透明度，取值范围0 - 1。
+		    strokeStyle: 'solid' //边线的样式，solid或dashed。
+		}
+		    //实例化鼠标绘制工具
+		var drawingManager = new BMapLib.DrawingManager(bm, {
+		    isOpen: false, //是否开启绘制模式
+		    enableDrawingTool: true, //是否显示工具栏
+		    drawingToolOptions: {
+		        anchor: BMAP_ANCHOR_TOP_RIGHT, //位置
+		        offset: new BMap.Size(5, 5), //偏离值
+		    },
+		    circleOptions: styleOptions, //圆的样式
+		    polylineOptions: styleOptions, //线的样式
+		    polygonOptions: styleOptions, //多边形的样式
+		    rectangleOptions: styleOptions //矩形的样式
+		}); 
+        function location (map) {
+	        var geolocation = new BMap.Geolocation();
+			geolocation.getCurrentPosition(function(r){
+				if(this.getStatus() == BMAP_STATUS_SUCCESS){
+					var mk = new BMap.Marker(r.point);
+					map.addOverlay(mk);
+					map.panTo(r.point);
+					alert('您的位置：'+r.point.lng+','+r.point.lat);
+				}
+				else {
+					alert('failed'+this.getStatus());
+				}        
+			});
+        }
+        function addSearchNearby(baidumap,content="吃饭",address="唐兴数码") {
+        	var local = new BMap.LocalSearch(baidumap,   
+              { renderOptions:{map: baidumap, autoViewport: true}});      
+			local.searchNearby(content, address); 
+        }
+        function addSearchBounds(baidumap,address="银行") {
+        	var local = new BMap.LocalSearch(baidumap,{
+        		renderOptions: {map: baidumap}
+        	});
+        	local.searchInBounds(address,baidumap.getBounds());
+        }
+        function localSearch(bm,address="唐兴数码") {
+        	var local = new BMap.LocalSearch(bm, {
+        		renderOptions:{map: bm}
+        	});
+        	local.search(address);
+        }
+        function addTrafficLayer(bm){
+            traffic = new BMap.TrafficLayer();	// 创建交通流量图层实例
+            bm.addTileLayer(traffic);	// 将图层添加到地图上
+        }
+        function addControl(bm){
+            bm.addControl(new BMap.NavigationControl());	// 添加平移缩放控件	
+        }
+        function addScaleControl(bm){
+			bm.addControl(new BMap.ScaleControl());	// 添加比例尺控件
+        }
+        function addOverviewMapControl(bm){
+            bm.addControl(new BMap.OverviewMapControl());	//添加缩略地图控件               
+        }
+        function addMapTypeControl(bm){
+            bm.addControl(new BMap.MapTypeControl());	
+        }
+        function addZoomendListener(bm){ // 实时监听地图放大级别
+        	bm.addEventListener("zoomend",function(){
+                var zoomNum = bm.getZoom();
+            })
+        }
+        function addEventListener(bm){
+        	bm.addEventListener("click", function(e){
+            	console.log("您点击了地图上的经度"+e.point.lng+"纬度"+e.point.lat+"点");
+            	var center = bm.getCenter();
+            	console.log("地图中心点变更为："+center.lng+ "," + center.lat);
+            });
+
+            bm.addEventListener("zoomend", function(){
+            	console.log("地图缩放至：" + this.getZoom() + "级");
+            })
+        }
+        function showInfo(e){
+        	console.log(e.point.lng + "," + e.point.lat);
+        	bm.removeEventListener("click",showInfo);
+        }
+        function addCanvasLayer(bm) {
+        	var canvasLayer = new BMap.CanvasLayer({
+            	update: update
+            });
+
+            bm.addOverlay(canvasLayer);
+        }
+        function update(){
+        	var ctx = this.canvas.getContext("2d");
+
+        	if (!ctx) {
+        		return;
+        	}
+
+        	ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+        	var temp = {};
+        	ctx.fillStyle = "rgba(50, 50, 255, 0.7)";
+        	ctx.beginPath();
+        	var data = [
+        		new BMap.Point(108.57308360761, 34.386694694667),
+        		new BMap.Point(108.57208360761, 34.385694694667),
+        		new BMap.Point(108.57108360761, 34.384694694667)
+        	];
+
+        	for (var i = 0, len = data.length; i < len; i++){
+
+        		// 绘制时需要对经纬度进行转换
+        		var pixel = bm.pointToPixel(data[i]);
+
+        		ctx.fillRect(pixel.x ,pixel.y, 30, 30);
+        	}
+        }
+        var opts = {
+            width : 250,     // 信息窗口宽度
+            height: 80,     // 信息窗口高度
+            title : "组件信息窗口" , // 信息窗口标题
+            enableMessage:true//设置允许信息窗发送短息
+        };
+
+        function translateOne(pointArr,para,map){
+            var convertor = new BMap.Convertor();
+            convertor.translate(pointArr,1,5,function(data){
+                if (data.status === 0) {
+                    var marker = new BMap.Marker(data.points[0]);
+                    map.addOverlay(marker);
+                    map.setCenter(data.points[0]);
+                    console.log("para="+para);
+                    addClickHandler( ""+para, marker, map);
+                }
+            })
+        }
+        function addClickHandler(content,marker,bm){
+            marker.setIcon(new BMap.Icon('http://map.baidu.com/newmap/static/common/images/mk_14e51b4.gif',new BMap.Size(34,24),{
+                imageOffset:new BMap.Size(0,(content.length-1)*-30) 
+            }))
+            var label = new BMap.Label(content,{offset:new BMap.Size(3,0)});
+            label.setStyle({
+                background:'none',color:'#fff',border:'none'
+            });
+            marker.setLabel(label);
+            marker.addEventListener("click",function(e){
+                alert(content);
+            });
+            marker.addEventListener("mouseover",function(e){
+                infoWindow(content,e,bm,0);
+            });
+            // marker.addEventListener("mouseout",function(e){
+            //     infoWindow(content,e,bm,1);
+            // })
+        }
+        function infoWindow(content,e,map,state){
+            var p = e.target;
+            var pmsn = $("#a-pm-"+content).parent().siblings("div.xl_text").html();
+            var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+            var infoWindow = new BMap.InfoWindow("组件序号："+content+"&emsp;&emsp;&emsp;组件编号："+pmsn,opts);
+            if (state == 0) {
+                map.openInfoWindow(infoWindow,point); //开启信息窗口    
+            } else {
+                map.closeInfoWindow(infoWindow,point);
+            }
+            
+        }
+        $("div.remove-traffic").on("click",function(){
+        	if (bm != 0) {
+        		bm.removeTileLayer(traffic);	// 将图层移除
+        	}
+        })
+    })   
+</script>
+<!--引入网站头开始-->
+{include file="../application/index/view/public/_footer.html"/}
+<!--引入网站头结束-->

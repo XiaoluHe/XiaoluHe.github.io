@@ -27,7 +27,7 @@ class Pdf {
 		    ob_end_clean();
 		 
 		    //convert HTML to PDF
-		    shell_exec("wkhtmltopdf -q {$filename}.html {$filename}.pdf");
+		    shell_exec("wkhtmltopdf -q --outline cover {$filename}.html {$filename}.pdf");
 		    if(file_exists("{$filename}.pdf")){
 		      header("Content-type:application/pdf");
 		      header("Content-Disposition:attachment;filename={$filename}.pdf");

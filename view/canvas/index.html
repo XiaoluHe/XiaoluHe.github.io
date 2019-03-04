@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link rel="import" href="../template/_header.html">
+	<style type="text/css">
+		div#subject div.canvas{float: left; margin: 5px;}
+		div#subject div.canvas canvas{background: white;}
+	</style>
+</head>
+<body>
+	<div id="top" class="top clearfix"></div>
+	<div id="menu" class="non-selectable"></div>
+	<div id="content">
+		<div id="nav">
+			canvas-画布
+		</div>
+		<div id="subject">
+			<div class="canvas">
+				<h3>像素操作</h3>
+				<canvas id="canvas7" width="300" height="300" >
+					温馨提示：当前所用浏览器不支持canvas标签
+				</canvas>
+			</div>
+			<div class="canvas">
+				<h3>阴影</h3>
+				<canvas id="canvas8" width="300" height="300" >
+					温馨提示：当前所用浏览器不支持canvas标签
+				</canvas>
+			</div>
+			<div class="canvas">
+				<h3>图片阴影</h3>
+				<canvas id="canvas9" width="300" height="300" >
+					温馨提示：当前所用浏览器不支持canvas标签
+				</canvas>
+			</div>
+			<div class="canvas">
+				<h3>属性和方法</h3>
+				<canvas id="canvas0" width="300" height="300">
+					温馨提示：当前所用浏览器不支持canvas标签
+				</canvas>
+			</div>
+			<div class="canvas">
+				<h3>源图绘制</h3>
+				<canvas id="canvas1" width="300" height="300" >
+					温馨提示：当前所用浏览器不支持canvas标签
+				</canvas>
+			</div>
+			<div class="canvas">
+				<h3>缩放源图绘制</h3>
+				<canvas id="canvas2" width="300" height="300" >
+					温馨提示：当前所用浏览器不支持canvas标签
+				</canvas>
+			</div>
+			<div class="canvas">
+				<h3>截取源图绘制</h3>
+				<canvas id="canvas3" width="300" height="300" >
+					温馨提示：当前所用浏览器不支持canvas标签
+				</canvas>
+			</div>
+			<div class="canvas">
+				<h3>平铺图片</h3>
+				<canvas id="canvas4" width="300" height="300" >
+					温馨提示：当前所用浏览器不支持canvas标签
+				</canvas>
+			</div>
+			<div class="canvas">
+				<h3>图片文字填充效果</h3>
+				<canvas id="canvas5" width="300" height="300" >
+					温馨提示：当前所用浏览器不支持canvas标签
+				</canvas>
+			</div>
+			<div class="canvas">
+				<h3>图片文字填充效果</h3>
+				<canvas id="canvas6" width="300" height="300" >
+					温馨提示：当前所用浏览器不支持canvas标签
+				</canvas>
+			</div>
+		</div>
+	</div>
+</body>
+	<link rel="import" href="../template/_footer.html">
+	<script type="text/javascript">
+		$(function(){
+			console.log("脚本开始");
+			var img = new Image();
+			img.src = "../../res/img/personal-portrait.jpg";
+			var canvas9 = document.getElementById("canvas9");
+			if (canvas9.getContext("2d")) {
+				var ctx9 = canvas9.getContext("2d");
+				let img0 = new Image();
+				img0.src = img.src;
+				img0.onload = function(){
+					ctx9.shadowOffsetX = 5;
+					ctx9.shadowOffsetY = 5;
+					ctx9.shadowColor = "LightSkyBlue";
+					ctx9.shadowBlur = 10;
+					ctx9.fillRect(10, 10, 100, 100);
+
+					ctx9.drawImage(img0, 10, 10, 200, 200);
+				}
+			}
+
+			var canvas8 = document.getElementById("canvas8");
+			if (canvas8.getContext("2d")) {
+				var ctx8 = canvas8.getContext("2d");
+				ctx8.font = "bold 30px 微软雅黑";
+				ctx8.shadowOffsetX = 5;
+				ctx8.shadowOffsetY = 5;
+				ctx8.shadowColor = "LightSkyBlue";
+				ctx8.shadowBlur = 10;
+				ctx8.fillStyle = "Black";
+				ctx8.fillText("小路还是小路！！！", 50 ,100);
+				// ctx8.restore();
+			}
+			var canvas7 = document.getElementById("canvas7");
+			if (canvas7.getContext("2d")) {
+				var img1 = new Image();
+				img1.src = img.src;
+				img1.onload = function(){
+					ctx7 = canvas7.getContext("2d");
+					ctx7.drawImage(img1, 0, 0, 100, 100);
+					let imgData0 = ctx7.getImageData(0, 0, 100, 100);
+					let data0 = imgData0.data;
+					// 反色
+					for (let i=0; i<data0.length; i+=4){
+						data0[i+0] = 255-data0[i+0];
+						data0[i+1] = 255-data0[i+1];
+						data0[i+2] = 255-data0[i+2];
+					}
+					ctx7.putImageData(imgData0, 100, 0);
+
+					// 灰度
+					let imgData1 = ctx7.getImageData(0, 0, 100, 100);
+					let data1 = imgData1.data;
+					for (let i=0; i<data1.length; i+=4){
+						let grayscale = parseInt((255-data1[i+0])*0.3+(255-data1[i+1])*0.59+(255-data1[i+2])*0.11);
+						data1[i+0] = grayscale;
+						data1[i+1] = grayscale;
+						data1[i+2] = grayscale;
+					}
+					ctx7.putImageData(imgData1, 200, 0);
+
+					// 改变亮度
+					let imgData2 = ctx7.getImageData(0, 0, 100, 100);
+					let data2 = imgData2.data;
+					let a = 40;
+					for (let i=0; i<data2.length; i++) {
+						// 改变亮度
+						data2[i+0] +=a;
+						data2[i+1] +=a;
+						data2[i+2] +=a;
+					}
+					ctx7.putImageData(imgData2, 0, 100);
+
+					//透明效果
+					let imgData3 = ctx7.getImageData(0, 0, 100, 100);
+					let data3 = imgData3.data;
+					for (let i=0; i<data3.length; i++) {
+						data3[i+3] *= 0.5;
+					}
+					ctx7.putImageData(imgData3, 100, 100);
+				}	
+			}
+			var canvas6 = document.getElementById("canvas6");
+			if (canvas6.getContext("2d")) {
+				var img1 = new Image();
+				img1.src = img.src;
+				img1.onload = function(){
+					// 图形定制
+					ctx6 = canvas6.getContext("2d");
+					ctx6.beginPath();
+					ctx6.arc(100, 100, 100, 0, 360*Math.PI/180, false);
+					ctx6.closePath();
+					ctx6.stroke();
+					// 切割
+					ctx6.clip();
+					ctx6.drawImage(img1, 0, 0);
+				}
+			}
+			var canvas5 = document.getElementById("canvas5");
+			if (canvas5.getContext("2d")) {
+				var img1 = new Image();
+				img1.src = img.src;
+				img1.onload = function(){
+					ctx5 = canvas5.getContext("2d");
+					ctx5.restore();
+					ctx5.drawImage(img1, 100, 50, 120,70);
+
+					// 利用图片给文字添加效果
+					ctx5.font = "bold 50px 微软雅黑";
+					ctx5.fillStyle = ctx5.createPattern(img1, 'repeat');
+					ctx5.fillText("小路", 100, 100);
+				}
+			}
+			var canvas4 = document.getElementById("canvas4");
+			if (canvas4.getContext("2d")) {
+				var ctx4 = canvas4.getContext("2d");
+				var bgCanvas = document.createElement('canvas');
+				bgCanvas.width = 20;
+				bgCanvas.height = 20;
+				var bgCtx = bgCanvas.getContext('2d');
+				bgCtx.beginPath();
+				bgCtx.arc(10,10, 10, 0, 2*Math.PI);
+				bgCtx.closePath();
+				bgCtx.fillStyle = "red";
+				bgCtx.fill();
+				console.log(bgCanvas.toDataURL());
+
+				ctx4.restore();
+				ctx4.beginPath();
+				var pattern = ctx4.createPattern(bgCanvas, 'repeat');
+				ctx4.fillStyle = pattern;
+				ctx4.rect(0,0,300,300);
+				ctx4.fill();
+			}
+			var canvas3 = document.getElementById("canvas3");
+			if (canvas3.getContext("2d")) {
+				var ctx3 = canvas3.getContext("2d");
+				var img1 = new Image();
+				img1.src = img.src;
+				img1.onload = function(){
+					ctx3.drawImage(img1, 200, 200, 100, 100, 10, 10, 200, 100);
+				}
+			}
+			var canvas2 = document.getElementById("canvas2");
+			if (canvas2.getContext("2d")) {
+				var img1 = new Image();
+				img1.src = "../../res/img/personal-portrait.jpg";
+				var ctx2 = canvas2.getContext("2d");
+				img1.onload = function(){
+					ctx2.restore();
+					ctx2.drawImage(img1, 10, 100, 100, 100);
+				}
+			}
+			var canvas1 = document.getElementById("canvas1");
+			if (canvas1.getContext("2d")) {
+				var ctx1 = canvas1.getContext("2d");
+				img.onload = function(){
+					ctx1.drawImage(img, 0, 0);
+				}
+			}
+			var canvas0 = document.getElementById("canvas0");
+			if (canvas0.getContext("2d")) {
+				var ctx0 = canvas0.getContext('2d');
+				ctx0.textAlign = "center";
+				ctx0.taxtBaseLine = "alphabetic";
+				ctx0.font = "50px Georgia";
+				ctx0.strokeText("strokeText", 150,100);
+				ctx0.fillStyle = "#00FF00";
+				ctx0.strokeStyle = "#000000";
+				ctx0.fillText("fillText测试", 150, 50);
+			}
+		})
+	</script>
+</html>

@@ -1,0 +1,20 @@
+<script type="text/javascript" src="../../res/js/jquery-1.11.3.js"></script>
+<script type="text/javascript" src="../../res/js/common.js"></script>
+<script type="text/javascript">
+	$(function(){
+		$("#top").load("../template/_top.html");
+		$("#menu").load("../template/_menu.html");
+		$("#menu").on("click","dl.menus dt",function(){
+				console.log("11");
+				if ($(this).hasClass("selected")) {
+					$(this).removeClass("selected");
+					$(this).siblings("dd").css({"display":"none"});
+				} else {
+					$(this).parents("#menu").find("dl.menus dt").removeClass("selected");
+					$(this).parents("#menu").find("dl.menus dt").siblings("dd").css({"display":"none"});
+					$(this).addClass("selected");
+					$(this).siblings("dd").css({"display":"block"});
+				}
+			})
+	})
+</script>

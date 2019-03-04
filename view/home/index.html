@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="import" href="../template/_header.html">
+	<style type="text/css">
+		#myCanvas{background-color: white;}
+	</style>
+</head>
+<body>
+	<div id="top" class="top clearfix"></div>
+	<div id="menu" class="non-selectable"></div>
+	<div id="content">
+		<canvas id="myCanvas"></canvas>
+		
+	</div>
+</body>
+	<link rel="import" href="../template/_footer.html">
+	<script type="text/javascript">
+		var b;
+		var a= b||2;
+		console.log(a);
+		var wContent = 0; var hContent  =0;
+		$(function(){
+			// canvas学习开始
+			var canvas = document.getElementById("myCanvas");
+			wContent = $("#content").width();
+			hContent = $("#content").height();
+			console.log(wContent);
+			if (canvas.getContext("2d")) {	// 线条
+				canvas.setAttribute("width",wContent);
+				canvas.setAttribute("height",hContent);
+				console.log("..");
+				var context0 = canvas.getContext("2d");
+				context0.lineWidth = 10;
+				context0.save();
+				context0.beginPath();
+				context0.fillStyle = "red";
+				context0.moveTo(100, 100);
+				context0.lineTo(300, 200);
+				context0.closePath();
+				context0.restore();
+				context0.stroke();
+			}
+			if (canvas) { 	// 椭圆
+				var ctx = canvas.getContext("2d");
+				ctx.fillStyle = '#FF0000';
+				ctx.beginPath();
+				ctx.arc(800,300,20,0,2*Math.PI,true);
+				ctx.closePath();
+				ctx.fill();
+				round(ctx, 300, 300, 200, 100);
+			}
+			if (canvas.getContext("2d")) {	//玫瑰与心
+				canvasDraw(canvas);
+				canvasDraw(canvas,1);
+			}
+		});
+		const cnv = document.getElementById('myCanvas');
+		const cxt = cnv.getContext("2d");
+		const rectWidth = 100;
+		const rectHeight = 100;
+
+		let i = 0;
+		function rotate() {
+		  // 角度累加
+		  i++;
+		  // 清除画布
+		  // cxt.clearRect(0,0, cnv.width, cnv.height);
+		  // 保存当前状态
+		  cxt.save();
+		  // 坐标原点移动到画布中心点的100px处
+		  cxt.translate(rectWidth/2+100, rectHeight/2+100);
+		  // 指定旋转角度
+		  cxt.rotate(Math.PI*(i/10));
+		  // 绘制填充一个蓝色的矩形
+		  cxt.fillStyle="blue";
+		  cxt.fillRect(-rectWidth/2, -rectHeight/2, rectWidth, rectHeight);
+		  // 还原状态，为什么请查看上节介绍
+		  cxt.restore();
+		  // 执行动画效果
+		  requestAnimationFrame(rotate);
+		  if (i > 360) {
+		    i = 0;
+		  }
+		}
+		requestAnimationFrame(rotate);
+		function canvasDraw(canvas,para=0) {
+			var context = canvas.getContext("2d"),
+				radian = 0, // 设置初始弧度
+				radian_add = Math.PI/180;
+			context.beginPath();
+			context.translate(250, 250);	// 设置绘图原点
+			para==0?context.moveTo(getX(radian), getY(radian)):context.moveTo(getX1(radian), getY1(radian));	// 移动绘制游标到原点
+			while( radian <= (Math.PI*2)) {
+				radian += radian_add;
+				X = para==0?getX(radian):getX1(radian);
+				Y = para==0?getY(radian):getY1(radian);
+				context.lineTo(X, Y);
+			}
+			context.strokeStyle = "red";	// 设置描边样式
+			context.stroke();	// 对路径描边
+		}
+		function getX(t) {	//获取玫瑰线的X坐标
+			return 100 * Math.sin(4*t)*Math.cos(t);
+		}
+		function getY(t) {
+			return 100*Math.sin(4*t)*Math.sin(t);
+		}
+		function getX1(t) {
+			return 15*(16*Math.pow(Math.sin(t),3));
+		}
+		function getY1(t) {
+			return -15*(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t));
+		}
+		function round(context, x, y, a, b){
+			var step = (a > b) ? 1/a: 1/b;
+			context.beginPath();
+			context.moveTo(x+a, y);
+			for (var i = 0; i<2*Math.PI; i += step) {
+				context.lineTo(x + a * Math.cos(i), y + b*Math.sin(i));
+			}
+			context.closePath();
+			context.stroke();
+		}
+		var speed = 0;
+		var startPoint = 800;
+		function run(ctx) {
+			speed = -7;
+			// ctx.clearRect(0, 0, wContent, hContent);
+			startPoint += speed;
+			ctx.beginPath();
+			ctx.arc(startPoint, 300, 30, 0, 2*Math.PI, true);
+			ctx.closePath();
+			ctx.fill();
+		}
+	</script>
+</html>

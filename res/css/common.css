@@ -1,0 +1,65 @@
+/*------------------------------------------公共样式开始----------------------------------------*/
+*{margin: 0px; padding: 0px;}
+body{position: relative; background-color: #FFF; color: #333;}
+a{text-decoration: none;}
+.display-block{display: block;}
+.display-none{display: none;}
+.non-selectable{
+	-moz-user-select: none; 
+	-khtml-user-select: none; 
+	user-select: none; 
+	font-style: italic;
+}
+.location{position: relative;}
+.display-abs{position: absolute;}
+.ele-hidden{height: 0px; overflow: hidden;}
+/*------------------------------------------公共样式结束----------------------------------------*/
+
+
+/*------------------------------------------nav样式开始----------------------------------------*/
+div.top{
+	position: fixed; width: 100%; height: 80px;
+ 	background: #ECEFF1; background-size: cover;
+ 	top: 0px; left: 0px; z-index: 1;
+ }
+.clearfix{zoom: 1;}
+div.head-main{float: left; padding: 0px 40px;}
+div.head-main a img{
+	text-decoration: none; cursor: pointer; 
+	background-repeat: no-repeat; background-position: left center;
+	height: 80px;
+}
+
+div.head-right{float: right; margin-right: 45px;}
+div.head-right a{text-decoration: none; line-height: 80px;}
+/*------------------------------------------nav样式结束----------------------------------------*/
+
+
+/*------------------------------------------menu样式开始----------------------------------------*/
+div#menu{
+	position: fixed;
+	top: 80px; bottom: 0; left: 0; 
+	width: 200px;
+	background: lightgray; z-index: 1;
+}
+div#menu dl.menus{
+	width: 198px; line-height: 50px;
+	text-align: center; color: #333;
+	background: #EEE;
+	border: 1px solid #CCC;
+}
+div#menu dl.menus dd ul li{border: 1px solid #333;}
+/*------------------------------------------menu样式结束----------------------------------------*/
+
+
+/*------------------------------------------content样式结束----------------------------------------*/
+div#content{
+	position: fixed;
+	left: 200px; top: 80px; bottom: 0px; right: 0px;
+	background: #EEE; z-index: 1;
+	/*padding: 30px;*/
+}
+div#nav{background-color: white; padding: 10px;}
+div#subject{width: 100%; height: 100%; overflow: scroll;}
+
+/*------------------------------------------content样式结束----------------------------------------*/

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!-- HTML START -->
 1、canvas
 	--------属性和方法
